@@ -4,6 +4,7 @@ namespace StocksApp.Controllers
 {
     public class TradeController : Controller
     {
+
         [Route("/")]
         public IActionResult Index()
         {
