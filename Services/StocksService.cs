@@ -1,5 +1,6 @@
 ﻿using ServiceContracts;
 using ServiceContracts.DTO;
+using Services.Helpers;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -16,6 +17,10 @@ namespace Services
             {
                 throw new ArgumentNullException(nameof(buyOrderRequest));
             }
+
+            //Model Validation
+            ValidationHelpers.ModelValidation(buyOrderRequest);
+
             throw new NotImplementedException();
         }
 

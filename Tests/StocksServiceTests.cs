@@ -27,5 +27,19 @@ namespace Tests
                 await _stocksService.CreateBuyOrder(request);
             });
         }
+
+        [Fact]
+        public async Task CreateBuyOrder_BuyOrderQuantityEquals0()
+        {
+            //Act
+            BuyOrderRequest? request = new BuyOrderRequest { Quantity = 0, StockName = "Microsoft", StockSymbol = "MSFT", Price = 1000, DateAndTimeOfOrder = Convert.ToDateTime("2020-01-01")};
+
+            //Assert
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
+            {
+                //Act
+                await _stocksService.CreateBuyOrder(request);
+            });
+        }
     }
 }
