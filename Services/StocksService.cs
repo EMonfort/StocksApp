@@ -12,6 +12,10 @@ namespace Services
     {
         public Task<BuyOrderResponse> CreateBuyOrder(BuyOrderRequest? buyOrderRequest)
         {
+            if (buyOrderRequest == null)
+            {
+                throw new ArgumentNullException(nameof(buyOrderRequest));
+            }
             throw new NotImplementedException();
         }
 
