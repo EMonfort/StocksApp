@@ -1,12 +1,4 @@
-﻿using ServiceContracts.Validators;
-using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace ServiceContracts.DTO
+﻿namespace ServiceContracts.DTO
 {
     public class BuyOrderResponse
     {
