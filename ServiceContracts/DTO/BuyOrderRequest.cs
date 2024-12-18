@@ -13,7 +13,7 @@ namespace ServiceContracts.DTO
         [Required(ErrorMessage = "Stock Name can't be blank")]
         public string StockName { get; set; }
 
-        [MinimumDateAttributeValidator]
+        [MinimumDateAttributeValidator("2000-01-01")]
         public DateTime DateAndTimeOfOrder { get; set; }
 
         [Range(1, 100000, ErrorMessage = "Quantity must be between {1} and {2}")]
