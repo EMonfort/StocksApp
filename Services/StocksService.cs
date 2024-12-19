@@ -12,11 +12,13 @@ namespace Services
 {
     public class StocksService : IStocksService
     {
-        List<BuyOrder> _orders;
+        private readonly List<BuyOrder> _buyOrders;
+        private readonly List<SellOrder> _sellOrders;
 
         public StocksService()
         {
-            _orders = new List<BuyOrder>();
+            _buyOrders = new List<BuyOrder>();
+            _sellOrders = new List<SellOrder>();
         }
 
         public async Task<BuyOrderResponse> CreateBuyOrder(BuyOrderRequest? buyOrderRequest)
@@ -32,14 +34,27 @@ namespace Services
             BuyOrder buyOrder = buyOrderRequest.ToBuyOrder();
 
             buyOrder.BuyOrderID = Guid.NewGuid();
-            _orders.Add(buyOrder);
+            _buyOrders.Add(buyOrder);
 
             return buyOrder.ToBuyOrderResponse();
         }
 
-        public Task<SellOrderResponse> CreateSellOrder(SellOrderRequest? sellOrderRequest)
+        public async Task<SellOrderResponse> CreateSellOrder(SellOrderRequest? sellOrderRequest)
         {
-            throw new NotImplementedException();
+            if (sellOrderRequest == null)
+            {
+                throw new ArgumentNullException(nameof(sellOrderRequest));
+            }
+
+            //Model Validation
+            ValidationHelpers.ModelValidation(sellOrderRequest);
+
+            SellOrder sellOrder = sellOrderRequest.ToSellOrder();
+
+            sellOrder.SellOrderID = Guid.NewGuid();
+            _sellOrders.Add(sellOrder);
+
+            return sellOrder.ToSellOrderResponse();
         }
 
         public Task<List<BuyOrderResponse>> GetBuyOrders()

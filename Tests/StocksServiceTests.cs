@@ -14,7 +14,7 @@ namespace Tests
             _stocksService = new StocksService();
         }
 
-        #region
+        #region CreateBuyOrder
 
         [Fact]
         public async Task CreateBuyOrder_NullBuyOrderRequest()
@@ -127,6 +127,123 @@ namespace Tests
 
             //Assert
             Assert.NotEqual(Guid.Empty, buyOrderResponseFromCreate.BuyOrderID);
+        }
+
+        #endregion
+
+        #region CreateSellOrder
+
+        [Fact]
+        public async Task CreateSellOrder_NullBuyOrderRequest()
+        {
+            //Act
+            SellOrderRequest? request = null;
+
+            //Assert
+            await Assert.ThrowsAsync<ArgumentNullException>(async () =>
+            {
+                //Act
+                await _stocksService.CreateSellOrder(request);
+            });
+        }
+
+        [Fact]
+        public async Task CreateSellOrder_BuyOrderQuantityEquals0()
+        {
+            //Act
+            SellOrderRequest? request = new SellOrderRequest { Quantity = 0, StockName = "Microsoft", StockSymbol = "MSFT", Price = 1000, DateAndTimeOfOrder = Convert.ToDateTime("2020-01-01") };
+
+            //Assert
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
+            {
+                //Act
+                await _stocksService.CreateSellOrder(request);
+            });
+        }
+
+        [Fact]
+        public async Task CreateSellOrder_BuyOrderQuantityEquals100001()
+        {
+            //Act
+            SellOrderRequest? request = new SellOrderRequest { Quantity = 100001, StockName = "Microsoft", StockSymbol = "MSFT", Price = 1000, DateAndTimeOfOrder = Convert.ToDateTime("2020-01-01") };
+
+            //Assert
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
+            {
+                //Act
+                await _stocksService.CreateSellOrder(request);
+            });
+        }
+
+
+        [Fact]
+        public async Task CreateSellOrder_BuyOrderPriceEquals0()
+        {
+            //Act
+            SellOrderRequest? request = new SellOrderRequest { Price = 0, StockName = "Microsoft", StockSymbol = "MSFT", Quantity = 1000, DateAndTimeOfOrder = Convert.ToDateTime("2020-01-01") };
+
+            //Assert
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
+            {
+                //Act
+                await _stocksService.CreateSellOrder(request);
+            });
+        }
+
+        [Fact]
+        public async Task CreateSellOrder_BuyOrderPriceEquals10001()
+        {
+            //Act
+            SellOrderRequest? request = new SellOrderRequest { Price = 10001, StockName = "Microsoft", StockSymbol = "MSFT", Quantity = 1000, DateAndTimeOfOrder = Convert.ToDateTime("2020-01-01") };
+
+            //Assert
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
+            {
+                //Act
+                await _stocksService.CreateSellOrder(request);
+            });
+        }
+
+        [Fact]
+        public async Task CreateSellOrder_NullStockSymbol()
+        {
+            //Act
+            SellOrderRequest? request = new SellOrderRequest { Price = 1000, StockName = "Microsoft", StockSymbol = null, Quantity = 1000, DateAndTimeOfOrder = Convert.ToDateTime("2020-01-01") };
+
+            //Assert
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
+            {
+                //Act
+                await _stocksService.CreateSellOrder(request);
+            });
+        }
+
+        [Fact]
+        public async Task CreateSellOrder_DateTimeOrderPreviousThanYear2000()
+        {
+            //Act
+            SellOrderRequest? request = new SellOrderRequest { DateAndTimeOfOrder = Convert.ToDateTime("1999-12-31"), Price = 1000, StockName = "Microsoft", StockSymbol = "MSFT", Quantity = 1000 };
+
+            //Assert
+            await Assert.ThrowsAsync<ArgumentException>(async () =>
+            {
+                //Act
+                await _stocksService.CreateSellOrder(request);
+            });
+        }
+
+        [Fact]
+        public async Task CreateSellOrder_ValidBuyOrderDetails()
+        {
+            //Act
+            SellOrderRequest? request = new SellOrderRequest { DateAndTimeOfOrder = Convert.ToDateTime("2005-12-31"), Price = 1000, StockName = "Microsoft", StockSymbol = "MSFT", Quantity = 1000 };
+
+
+            //Act
+            SellOrderResponse sellOrderResponseFromCreate = await _stocksService.CreateSellOrder(request);
+
+            //Assert
+            Assert.NotEqual(Guid.Empty, sellOrderResponseFromCreate.SellOrderID);
         }
 
         #endregion
