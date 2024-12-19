@@ -1,4 +1,5 @@
-﻿using ServiceContracts;
+﻿using Entities;
+using ServiceContracts;
 using ServiceContracts.DTO;
 using Services.Helpers;
 using System;
@@ -11,7 +12,14 @@ namespace Services
 {
     public class StocksService : IStocksService
     {
-        public Task<BuyOrderResponse> CreateBuyOrder(BuyOrderRequest? buyOrderRequest)
+        List<BuyOrder> _orders;
+
+        public StocksService()
+        {
+            _orders = new List<BuyOrder>();
+        }
+
+        public async Task<BuyOrderResponse> CreateBuyOrder(BuyOrderRequest? buyOrderRequest)
         {
             if (buyOrderRequest == null)
             {
@@ -21,7 +29,12 @@ namespace Services
             //Model Validation
             ValidationHelpers.ModelValidation(buyOrderRequest);
 
-            throw new NotImplementedException();
+            BuyOrder buyOrder = buyOrderRequest.ToBuyOrder();
+
+            buyOrder.BuyOrderID = Guid.NewGuid();
+            _orders.Add(buyOrder);
+
+            return buyOrder.ToBuyOrderResponse();
         }
 
         public Task<SellOrderResponse> CreateSellOrder(SellOrderRequest? sellOrderRequest)

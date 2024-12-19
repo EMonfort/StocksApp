@@ -1,6 +1,5 @@
-﻿using System;
-using System.Collections.Generic;
-using System.ComponentModel.DataAnnotations;
+﻿using System.ComponentModel.DataAnnotations;
+using Entities;
 using ServiceContracts.Validators;
 
 namespace ServiceContracts.DTO
@@ -21,5 +20,17 @@ namespace ServiceContracts.DTO
 
         [Range(1, 10000, ErrorMessage = "Quantity must be between {1} and {2}")]
         public double Price { get; set; }
+
+        public BuyOrder ToBuyOrder()
+        {
+            return new BuyOrder()
+            {
+                StockSymbol = StockSymbol,
+                StockName = StockName,
+                Price = Price,
+                Quantity = Quantity,
+                DateAndTimeOfOrder = DateAndTimeOfOrder
+            };
+        }
     }
 }
