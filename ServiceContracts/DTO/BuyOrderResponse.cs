@@ -11,6 +11,26 @@ namespace ServiceContracts.DTO
         public uint Quantity { get; set; }
         public double Price { get; set; }
         public double TradeAmount { get; set; }
+
+        public override bool Equals(object? obj)
+        {
+            if (obj == null) return false;
+            if (obj is not BuyOrderResponse) return false;
+
+            BuyOrderResponse other = (BuyOrderResponse)obj;
+            return BuyOrderID == other.BuyOrderID && StockSymbol == other.StockSymbol && StockName == other.StockName && DateAndTimeOfOrder == other.DateAndTimeOfOrder && Quantity == other.Quantity && Price == other.Price;
+        }
+
+
+        public override int GetHashCode()
+        {
+            return StockSymbol.GetHashCode();
+        }
+
+        public override string ToString()
+        {
+            return $"Buy Order ID: {BuyOrderID}, Stock Symbol: {StockSymbol}, Stock Name: {StockName}, Date and Time of Buy Order: {DateAndTimeOfOrder.ToString("dd MMM yyyy hh:mm ss tt")}, Quantity: {Quantity}, Buy Price: {Price}, Trade Amount: {TradeAmount}";
+        }
     }
 
     public static class BuyOrderExtensions

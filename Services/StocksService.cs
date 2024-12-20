@@ -57,14 +57,14 @@ namespace Services
             return sellOrder.ToSellOrderResponse();
         }
 
-        public Task<List<BuyOrderResponse>> GetBuyOrders()
+        public async Task<List<BuyOrderResponse>> GetBuyOrders()
         {
-            throw new NotImplementedException();
+            return _buyOrders.Select(b => b.ToBuyOrderResponse()).ToList();
         }
 
-        public Task<List<SellOrderResponse>> GetSellOrders()
+        public async Task<List<SellOrderResponse>> GetSellOrders()
         {
-            throw new NotImplementedException();
+            return _sellOrders.Select(s => s.ToSellOrderResponse()).ToList();
         }
     }
 }

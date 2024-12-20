@@ -2,16 +2,19 @@ using ServiceContracts;
 using ServiceContracts.DTO;
 using Services;
 using System.Runtime.CompilerServices;
+using Xunit.Abstractions;
 
 namespace Tests
 {
     public class StocksServiceTests
     {
-        public readonly IStocksService _stocksService;
+        private readonly IStocksService _stocksService;
+        private readonly ITestOutputHelper _testOutputHelper;
 
-        public StocksServiceTests()
+        public StocksServiceTests(ITestOutputHelper testOutputHelper)
         {
             _stocksService = new StocksService();
+            _testOutputHelper = testOutputHelper;
         }
 
         #region CreateBuyOrder
@@ -245,6 +248,128 @@ namespace Tests
             //Assert
             Assert.NotEqual(Guid.Empty, sellOrderResponseFromCreate.SellOrderID);
         }
+
+        #endregion
+
+        #region GetAllBuyOrders
+
+        [Fact]
+        public async void GetAllBuyOrders_EmptyList()
+        {
+            //Arrange
+
+            //Act
+            List<BuyOrderResponse> buyOrderResponses = await _stocksService.GetBuyOrders();
+
+            //Assert
+            Assert.Empty(buyOrderResponses);
+        }
+
+        [Fact]
+        public async void GetAllBuyOrders_FewBuyOrdersInList()
+        {
+            //Arrange
+            BuyOrderRequest? buyOderRequest1 = new BuyOrderRequest { Quantity = 100, StockName = "Microsoft", StockSymbol = "MSFT", Price = 1500, DateAndTimeOfOrder = Convert.ToDateTime("2020-01-01") };
+            BuyOrderRequest? buyOderRequest2 = new BuyOrderRequest { Quantity = 250, StockName = "Aple", StockSymbol = "AAPL", Price = 750, DateAndTimeOfOrder = Convert.ToDateTime("2014-04-08") };
+
+            List<BuyOrderRequest?> buyOrderRequests = new List<BuyOrderRequest>();
+            buyOrderRequests.Add(buyOderRequest1);
+            buyOrderRequests.Add(buyOderRequest2);
+
+            List<BuyOrderResponse> buyOrderResponsesFromAdd = new List<BuyOrderResponse>();
+
+            foreach (BuyOrderRequest? buyOrderRequest in buyOrderRequests)
+            {
+                buyOrderResponsesFromAdd.Add(await _stocksService.CreateBuyOrder(buyOrderRequest));
+            }
+
+            //print personResponseListFromAdd
+            _testOutputHelper.WriteLine("Expected:");
+            foreach (BuyOrderResponse buyResponseFromAdd in buyOrderResponsesFromAdd)
+            {
+                _testOutputHelper.WriteLine(buyResponseFromAdd.ToString());
+            }
+
+            //Act
+            List<BuyOrderResponse> buyOrderResponsesFromGet = await _stocksService.GetBuyOrders();
+
+            //print personResponseListFromGet
+            _testOutputHelper.WriteLine("Actual:");
+            foreach (BuyOrderResponse buyOrderResponseFromGet in buyOrderResponsesFromGet)
+            {
+                _testOutputHelper.WriteLine(buyOrderResponseFromGet.ToString());
+            }
+
+            //Assert
+            Assert.Equal(buyOrderResponsesFromAdd.Count, buyOrderResponsesFromGet.Count);
+
+            foreach (BuyOrderResponse buyOrderResponseFromAdd in buyOrderResponsesFromAdd)
+            {
+                Assert.Contains(buyOrderResponseFromAdd, buyOrderResponsesFromGet);
+            }
+        }
+
+
+        #endregion
+
+        #region GetAllSellOrders
+
+        [Fact]
+        public async void GetAllSellOrders_EmptyList()
+        {
+            //Arrange
+
+            //Act
+            List<SellOrderResponse> sellOrderResponses = await _stocksService.GetSellOrders();
+
+            //Assert
+            Assert.Empty(sellOrderResponses);
+        }
+
+        [Fact]
+        public async void GetAllSellOrders_FewBuyOrdersInList()
+        {
+            //Arrange
+            SellOrderRequest? sellOderRequest1 = new SellOrderRequest { Quantity = 100, StockName = "Microsoft", StockSymbol = "MSFT", Price = 1500, DateAndTimeOfOrder = Convert.ToDateTime("2020-01-01") };
+            SellOrderRequest? sellOderRequest2 = new SellOrderRequest { Quantity = 250, StockName = "Aple", StockSymbol = "AAPL", Price = 750, DateAndTimeOfOrder = Convert.ToDateTime("2014-04-08") };
+
+            List<SellOrderRequest?> sellOrderRequests = new List<SellOrderRequest>();
+            sellOrderRequests.Add(sellOderRequest1);
+            sellOrderRequests.Add(sellOderRequest2);
+
+            List<SellOrderResponse> sellOrderResponsesFromAdd = new List<SellOrderResponse>();
+
+            foreach (SellOrderRequest? sellOrderRequest in sellOrderRequests)
+            {
+                sellOrderResponsesFromAdd.Add(await _stocksService.CreateSellOrder(sellOrderRequest));
+            }
+
+            //print
+            _testOutputHelper.WriteLine("Expected:");
+            foreach (SellOrderResponse sellResponseFromAdd in sellOrderResponsesFromAdd)
+            {
+                _testOutputHelper.WriteLine(sellResponseFromAdd.ToString());
+            }
+
+            //Act
+            List<SellOrderResponse> sellOrderResponsesFromGet = await _stocksService.GetSellOrders();
+
+            //print
+            _testOutputHelper.WriteLine("Actual:");
+            foreach (SellOrderResponse sellOrderResponseFromGet in sellOrderResponsesFromGet)
+            {
+                _testOutputHelper.WriteLine(sellOrderResponseFromGet.ToString());
+            }
+
+            //Assert
+            Assert.Equal(sellOrderResponsesFromAdd.Count, sellOrderResponsesFromGet.Count);
+
+            foreach (SellOrderResponse sellOrderResponseFromAdd in sellOrderResponsesFromAdd)
+            {
+                Assert.Contains(sellOrderResponseFromAdd, sellOrderResponsesFromGet);
+            }
+        }
+
 
         #endregion
     }
