@@ -71,6 +71,27 @@ namespace StocksApp.Controllers
         }
 
         [Route("[action]")]
+        [HttpPost]
+        public async Task<IActionResult> SellOrder(SellOrderRequest sellOrderRequest)
+        {
+            sellOrderRequest.DateAndTimeOfOrder = DateTime.Now;
+
+            ModelState.Clear();
+            TryValidateModel(sellOrderRequest);
+
+            if (!ModelState.IsValid)
+            {
+                ViewBag.Errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage).ToList();
+                StockTrade stockTrade = new StockTrade() { StockName = sellOrderRequest.StockName, Quantity = sellOrderRequest.Quantity, StockSymbol = sellOrderRequest.StockSymbol };
+                return View("Index", stockTrade);
+            }
+
+            await _stockService.CreateSellOrder(sellOrderRequest);
+
+            return RedirectToAction(nameof(Orders));
+        }
+
+            [Route("[action]")]
         public async Task<IActionResult> Orders()
         {
             List<BuyOrderResponse> buyOrders = await _stockService.GetBuyOrders();
